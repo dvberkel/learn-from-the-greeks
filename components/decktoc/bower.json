@@ -1,0 +1,19 @@
+{
+  "name": "decktoc",
+  "version": "0.0.0",
+  "main": "jquery.deck-toc.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "gitHead": "46596225e7872666bcff6e81c21bf39413310ddb",
+  "readme": "decktoc\n=======\n\n> A jQuery library that lets [deck.js][] and [toc][] work nicely together.\n\n[deck.js]: http://imakewebthings.com/deck.js/\n[toc]: http://projects.jga.me/toc/",
+  "readmeFilename": "README.md",
+  "_id": "decktoc@0.0.0",
+  "description": "decktoc =======",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dvberkel/decktoc.git"
+  }
+}

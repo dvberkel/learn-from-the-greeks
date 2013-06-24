@@ -1,0 +1,21 @@
+{
+  "name": "toc",
+  "description": "jQuery Table of Contents Plugin",
+  "version": "0.1.2",
+  "homepage": "http://projects.jga.me/toc/",
+  "license": "MIT",
+  "copyright": "Greg Allen",
+  "main": "dist/toc.js",
+  "dependencies": {},
+  "devDependencies": {
+    "assert": "*"
+  },
+  "gitHead": "b483435ded45c8a16e1bc77ba605de42944fcec6",
+  "readme": "#TOC\n\n[TOC](http://projects.jga.me/toc/) is a jQuery plugin for automatically generating a table of contents. \n\nFor more information, check out the [documentation](http://projects.jga.me/toc/).\n",
+  "readmeFilename": "README.md",
+  "_id": "toc@0.1.2",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jgallen23/toc"
+  }
+}
