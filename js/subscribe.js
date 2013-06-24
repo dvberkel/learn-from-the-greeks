@@ -1,21 +1,24 @@
 (function(presentation){
     presentation.subscribable = subscribable = {};
 
-    subscribable.addSubscriber = function addSubscriber(subscriber){
-	if (!this.subscribers) {
-	    this.subscribers = [];
+    function prependInitialisationTo(method){
+	return function(){
+	    if (!this.subscribers) {
+		this.subscribers = [];
+	    }
+	    method.apply(this, arguments);
 	}
-	this.subscribers.push(subscriber);
-    };
+    }
 
-    subscribable.notifySubscribers = function notifySubscribers(){
-	if (!this.subscribers) {
-	    this.subscribers = [];
-	}
+    subscribable.addSubscriber = prependInitialisationTo(function addSubscriber(subscriber){
+	this.subscribers.push(subscriber);
+    });
+
+    subscribable.notifySubscribers = prependInitialisationTo(function notifySubscribers(){
 	for (var index = 0; index < this.subscribers.length; index++) {
 	    var subscriber = this.subscribers[index];
 	    subscriber.call();
 	}
-    };
+    });
 
 })(presentation);
