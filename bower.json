@@ -5,6 +5,7 @@
     "deck.js": "latest",
     "toc": "latest",
     "decktoc": "latest",
+    "svg.js": "latest",
     "jasmine": "latest"
   }
 }
