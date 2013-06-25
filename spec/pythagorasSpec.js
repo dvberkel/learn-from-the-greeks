@@ -42,4 +42,43 @@ describe('Pythagoras', function(){
 	    expect(called).toBeTruthy();
 	});
     });
+
+    describe('view', function(){
+	beforeEach(function(){
+	    var testContainer = document.createElement('div');
+	    testContainer.setAttribute('id', 'test-container');
+	    var body = document.getElementsByTagName('body')[0];
+	    body.appendChild(testContainer);
+	});
+
+	it('should be defined', function(){
+	    expect(presentation.pythagoras.View).toBeDefined();
+	});
+
+	it('should be a constructor', function(){
+	    expect(typeof(presentation.pythagoras.View)).toBe('function');
+	});
+
+	it('should target a div with id \'test-container\'', function(){
+	    var container = document.getElementById('test-container');
+
+	    expect(container).not.toBe(null);
+	});
+
+	it('should create a svg element in \'test-container\'', function(){
+	    var model = new presentation.pythagoras.Model({ 'fraction': 0.3 });
+	    new presentation.pythagoras.View({ 'model': model, 'id': 'test-container' });
+
+	    var svg = document.getElementsByTagName('svg');
+
+	    expect(svg).toBeDefined();
+	    expect(svg.length).toBeGreaterThan(0);
+	});
+
+	afterEach(function(){
+	    var testContainer = document.getElementById('test-container');
+	    var body = document.getElementsByTagName('body')[0];
+	    body.removeChild(testContainer);
+	});
+    });
 });

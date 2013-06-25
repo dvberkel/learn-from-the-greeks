@@ -12,4 +12,7 @@
 	    return name;
 	}
     }).decktoc();
+
+    var model = new presentation.pythagoras.Model({ 'fraction': 0.3 });
+    new presentation.pythagoras.View({ 'model': model, 'id': 'pythagoras' });
 })(jQuery);
