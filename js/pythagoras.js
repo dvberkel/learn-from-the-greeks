@@ -82,10 +82,10 @@
 	'a' : function a(size, offset, fraction){
 	    if  (!this._a) {
 		var svg = this.svg();
-		var length = fraction * size;
+		var length = Math.sqrt(fraction * (1 - fraction)) * size;
 		this._a = svg.rect(length, length);
 		this._a.attr({ 'fill': '#ffff00', 'stroke': '#000000' });
-		this._a.move(offset, (1 - fraction) * size + offset);
+		this._a.move(offset, size + offset - length);
 	    }
 	    return this._a;
 	},
