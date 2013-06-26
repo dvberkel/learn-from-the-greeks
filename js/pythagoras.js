@@ -1,6 +1,22 @@
 (function(presentation){
     presentation.pythagoras = pythagoras = {};
 
+    function Point(options){
+	options = presentation.extend({ 'x' : 0, 'y' : 0 }, options);
+
+	function getterSetterFor(field){
+	    return function getterSetter(value) {
+		if (value) {
+		    options[field] = value;
+		}
+		return options[field];
+	    };
+	};
+
+	this.x = getterSetterFor('x');
+	this.y = getterSetterFor('y');
+    }
+
     pythagoras.Model = function PythagorasModel(options){
 	var data = presentation.extend({ 'fraction' : 0.5 }, options);
 
@@ -73,6 +89,15 @@
 		this._b.move(fraction * size + offset, fraction * size + offset);
 	    }
 	    return this._b;
+	},
+	'points' : function b(size, offset, fraction){
+	    var points = [];
+	    var x = (1 - 2*f) * w / 2;
+	    var y = Math.sqrt(Math.pow(1/2 * w, 2) - Math.pow(x, 2));
+	    points.push(new Point({ 'x': offset, 'y': (offset + size) }));
+	    points.push(new Point({ 'x': (offset + fraction * size), 'y': (offset + size - y) }));
+	    points.push(new Point({ 'x': (offset + size), 'y': (offset + size) }));
+	    return points
 	},
     })
 })(presentation);
