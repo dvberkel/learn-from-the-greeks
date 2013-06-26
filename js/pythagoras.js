@@ -16,6 +16,9 @@
 	this.x = getterSetterFor('x');
 	this.y = getterSetterFor('y');
     }
+    Point.prototype.toString = function toString(){
+	return "" + this.x() + "," + this.y();
+    }
 
     pythagoras.Model = function PythagorasModel(options){
 	var data = presentation.extend({ 'fraction' : 0.5 }, options);
@@ -34,6 +37,7 @@
 	this.options = presentation.extend({
 	    'size': 100,
 	    'offset': 10,
+	    'triangle-template': presentation.pico('{{p0}} {{p1}} {{p2}}')
 	}, options);
 
 	this.render = function(){
@@ -48,6 +52,10 @@
 	    var circ = svg.circle(size);
 	    circ.center(size/2+offset, size+offset);
 	    circ.attr({ 'fill': 'none', 'stroke': '#000000' });
+
+	    var points = this.points(size, offset, fraction);
+	    var triangle = svg.polygon(this.options['triangle-template'](points));
+	    triangle.attr({ 'fill': '#ffffff', 'stroke': '#000000' });
 	}
 
 	this.render();
@@ -91,13 +99,13 @@
 	    return this._b;
 	},
 	'points' : function b(size, offset, fraction){
-	    var points = [];
-	    var x = (1 - 2*f) * w / 2;
-	    var y = Math.sqrt(Math.pow(1/2 * w, 2) - Math.pow(x, 2));
-	    points.push(new Point({ 'x': offset, 'y': (offset + size) }));
-	    points.push(new Point({ 'x': (offset + fraction * size), 'y': (offset + size - y) }));
-	    points.push(new Point({ 'x': (offset + size), 'y': (offset + size) }));
-	    return points
+	    var x = (1 - 2 * fraction) * size / 2;
+	    var y = Math.sqrt(Math.pow(1/2 * size, 2) - Math.pow(x, 2));
+	    return {
+		'p0': new Point({ 'x': offset, 'y': (offset + size) }),
+		'p1': new Point({ 'x': (offset + fraction * size), 'y': (offset + size - y) }),
+		'p2': new Point({ 'x': (offset + size), 'y': (offset + size) })
+	    };
 	},
     })
 })(presentation);
