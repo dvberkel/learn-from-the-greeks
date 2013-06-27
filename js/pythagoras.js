@@ -15,10 +15,41 @@
 
 	this.x = getterSetterFor('x');
 	this.y = getterSetterFor('y');
-    }
+    };
+    Point.prototype.difference = function(point){
+	return new Difference({ 'dx': (point.x() - this.x()), 'dy': (point.y() - this.y()) });
+    };
+    Point.prototype.add = function(difference){
+	return new point({
+	    'dx': (this.x() + difference.dx()),
+	    'dy': (this.y() + difference.dy())
+	});
+    };
     Point.prototype.toString = function toString(){
 	return "" + this.x() + "," + this.y();
-    }
+    };
+
+    function Difference(options) {
+	options = presentation.extend({ 'dx' : 0, 'dy' : 0 }, options);
+
+	function getterSetterFor(field) {
+	    return function getterSetter(value) {
+		if (value) {
+		    options[field] = value;
+		}
+		return options[field];
+	    };
+	};
+
+	this.dx = getterSetterFor('dx');
+	this.dy = getterSetterFor('dy');
+    };
+    Difference.prototype.rotated = function rotated(){
+	return new Difference({ 'dx' : (-this.dy()), 'dy' : (this.dx()) });
+    };
+    Difference.prototype.negated = function negated(){
+	return new Difference({ 'dx' : (-this.dx()), 'dy' : (-this.dy()) });
+    };
 
     pythagoras.Model = function PythagorasModel(options){
 	var data = presentation.extend({ 'fraction' : 0.5 }, options);
@@ -37,7 +68,8 @@
 	this.options = presentation.extend({
 	    'size': 100,
 	    'offset': 10,
-	    'triangle-template': presentation.pico('{{p0}} {{p1}} {{p2}}')
+	    'triangle-template': presentation.pico('{{p0}} {{p1}} {{p2}}'),
+	    'triangle-template': presentation.pico('{{p0}} {{p1}} {{p2}} {{p3}}')
 	}, options);
 
 	this.render = function(){
@@ -106,6 +138,20 @@
 		'p1': new Point({ 'x': (offset + fraction * size), 'y': (offset + size - y) }),
 		'p2': new Point({ 'x': (offset + size), 'y': (offset + size) })
 	    };
+	},
+	'rectangle' : function b(a, b){
+	    var d = a.difference(b);
+	    var c = b.add(d.rotated());
+	    var d = c.add(d.negated());
+	    var points = {
+		'p0': a,
+		'p1': b,
+		'p2': c,
+		'p3': d,
+	    };
+	    var rectangle = svg.polygon(this.options['rectangle-template'](points));
+	    rectangle.attr({ 'stroke': '#000000' });
+	    return rectangle;
 	},
     })
 })(presentation);
