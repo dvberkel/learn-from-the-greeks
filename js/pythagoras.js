@@ -20,9 +20,9 @@
 	return new Difference({ 'dx': (point.x() - this.x()), 'dy': (point.y() - this.y()) });
     };
     Point.prototype.add = function(difference){
-	return new point({
-	    'dx': (this.x() + difference.dx()),
-	    'dy': (this.y() + difference.dy())
+	return new Point({
+	    'x': (this.x() + difference.dx()),
+	    'y': (this.y() + difference.dy())
 	});
     };
     Point.prototype.toString = function toString(){
@@ -50,6 +50,9 @@
     Difference.prototype.negated = function negated(){
 	return new Difference({ 'dx' : (-this.dx()), 'dy' : (-this.dy()) });
     };
+    Difference.prototype.toString = function(){
+	return '(' + this.dx() + "," + this.dy() + ')';
+    };
 
     pythagoras.Model = function PythagorasModel(options){
 	var data = presentation.extend({ 'fraction' : 0.5 }, options);
@@ -69,25 +72,28 @@
 	    'size': 100,
 	    'offset': 10,
 	    'triangle-template': presentation.pico('{{p0}} {{p1}} {{p2}}'),
-	    'triangle-template': presentation.pico('{{p0}} {{p1}} {{p2}} {{p3}}')
+	    'rectangle-template': presentation.pico('{{p0}} {{p1}} {{p2}} {{p3}}')
 	}, options);
 
 	this.render = function(){
 	    var size = this.options.size;
  	    var offset = this.options.offset;
 	    var fraction = this.options.model.fraction();
+
 	    var svg = this.svg();
-	    this.c(size, offset, fraction);
-	    var a = this.a(size, offset, fraction);
-	    var b = this.b(size, offset, fraction);
 
-	    var circ = svg.circle(size);
-	    circ.center(size/2+offset, size+offset);
-	    circ.attr({ 'fill': 'none', 'stroke': '#000000' });
 
-	    var points = this.points(size, offset, fraction);
-	    var triangle = svg.polygon(this.options['triangle-template'](points));
-	    triangle.attr({ 'fill': '#ffffff', 'stroke': '#000000' });
+	    var points = this.points(size, fraction);
+
+	    var a = this.a(svg, points);
+	    a.fill('#ffff00').transform({ 'x' : 0, 'y' : 0 });
+	    var b = this.b(svg, points);
+	    b.fill('#0000ff').transform({ 'x' : 0, 'y' : 0 });
+	    var c = this.rectangle(svg, points.p2, points.p0);
+	    c.fill('#ff0000').transform({ 'x' : 0, 'y' : size });
+
+	    var triangle = this.triangle(svg, points);
+	    triangle.fill('#ffffff').transform({ 'x' : 0, 'y' : size});
 	}
 
 	this.render();
@@ -100,46 +106,33 @@
 	    }
 	    return this._svg;
 	},
-	'c' : function hypothenusa(size, offset, fraction){
-	    if  (!this._c) {
-		var size = this.options.size;
- 		var offset = this.options.offset;
-		var svg = this.svg();
-		this._c = svg.rect(size, size);
-		this._c.attr({ 'fill': '#ff0000', 'stroke': '#000000' });
-		this._c.move(offset, size + offset);
-	    }
-	    return this._c;
+	'a' : function a(svg, points){
+	    var rectangle = this.rectangle(svg, points.p0, points.p1);
+	    return rectangle;
 	},
-	'a' : function a(size, offset, fraction){
-	    if  (!this._a) {
-		var svg = this.svg();
-		var length = Math.sqrt(fraction * (1 - fraction)) * size;
-		this._a = svg.rect(length, length);
-		this._a.attr({ 'fill': '#ffff00', 'stroke': '#000000' });
-		this._a.move(offset, size + offset - length);
-	    }
-	    return this._a;
+	'b' : function b(svg, points){
+	    var rectangle = this.rectangle(svg, points.p1, points.p2);
+	    return rectangle;
 	},
-	'b' : function b(size, offset, fraction){
-	    if  (!this._b) {
-		var svg = this.svg();
-		this._b = svg.rect((1 - fraction) * size, (1 - fraction) * size);
-		this._b.attr({ 'fill': '#0000ff', 'stroke': '#000000' });
-		this._b.move(fraction * size + offset, fraction * size + offset);
-	    }
-	    return this._b;
+	'c' : function hypothenusa(svg, points){
+	    var rectangle = this.rectangle(svg, points.p2, points.p0);
+	    return rectangle;
 	},
-	'points' : function b(size, offset, fraction){
+	'points' : function b(size, fraction){
 	    var x = (1 - 2 * fraction) * size / 2;
 	    var y = Math.sqrt(Math.pow(1/2 * size, 2) - Math.pow(x, 2));
 	    return {
-		'p0': new Point({ 'x': offset, 'y': (offset + size) }),
-		'p1': new Point({ 'x': (offset + fraction * size), 'y': (offset + size - y) }),
-		'p2': new Point({ 'x': (offset + size), 'y': (offset + size) })
+		'p0': new Point({ 'x': 0, 'y': size }),
+		'p1': new Point({ 'x': (fraction * size), 'y': (size - y) }),
+		'p2': new Point({ 'x': size, 'y': size })
 	    };
 	},
-	'rectangle' : function b(a, b){
+	'triangle' : function b(svg, points){
+	    var triangle = svg.polygon(this.options['triangle-template'](points));
+	    triangle.stroke('#000000');
+	    return triangle;
+	},
+	'rectangle' : function b(svg, a, b){
 	    var d = a.difference(b);
 	    var c = b.add(d.rotated());
 	    var d = c.add(d.negated());
@@ -150,7 +143,7 @@
 		'p3': d,
 	    };
 	    var rectangle = svg.polygon(this.options['rectangle-template'](points));
-	    rectangle.attr({ 'stroke': '#000000' });
+	    rectangle.stroke('#000000');
 	    return rectangle;
 	},
     })
